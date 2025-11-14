@@ -55,39 +55,99 @@
 //     resolve(canvas.toDataURL("image/png"));
 //   });
 // }
+// export async function createImageFromText(
+//   text: string,
+//   rowNumber: number
+// ): Promise<string> {
+//   return new Promise((resolve) => {
+//     const canvas = document.createElement("canvas");
+
+//     // Dimensions
+//     canvas.width = 1000;
+//     canvas.height = 1500; // थोड़ा height भी बढ़ाया
+
+//     const ctx = canvas.getContext("2d")!;
+//     ctx.fillStyle = "#ffffff";
+//     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+//     // Bigger font
+//     ctx.font = "38px sans-serif";
+//     ctx.fillStyle = "#000000";
+//     ctx.textAlign = "left";
+
+//     // 🔥 Increased spacing
+//     const lineHeight = 60; // पहले 60 था
+//     const leftMargin = 100; // पहले 100 था
+//     const topMargin = 220; // पहले 220 था
+//     const maxWidth = canvas.width - 260; // left-right दोनों में ज्यादा spacing
+
+//     // Word wrapping
+//     const words = text.split(/\s+/);
+//     const lines: string[] = [];
+//     let currentLine = "";
+
+//     words.forEach((word) => {
+//       const testLine = currentLine + (currentLine ? "  " : "") + word;
+//       const metrics = ctx.measureText(testLine);
+
+//       if (metrics.width > maxWidth && currentLine !== "") {
+//         lines.push(currentLine);
+//         currentLine = word;
+//       } else {
+//         currentLine = testLine;
+//       }
+//     });
+
+//     if (currentLine.trim() !== "") {
+//       lines.push(currentLine);
+//     }
+
+//     // Draw text lines
+//     let yPosition = topMargin;
+//     lines.forEach((line) => {
+//       ctx.fillText(line, leftMargin, yPosition);
+//       yPosition += lineHeight;
+//     });
+
+//     resolve(canvas.toDataURL("image/png"));
+//   });
+// }
+
+
+
+
 export async function createImageFromText(
   text: string,
   rowNumber: number
 ): Promise<string> {
   return new Promise((resolve) => {
     const canvas = document.createElement("canvas");
-
-    // Dimensions
-    canvas.width = 1000;
-    canvas.height = 1500; // थोड़ा height भी बढ़ाया
+    canvas.width = 900;
+    canvas.height = 1200;
 
     const ctx = canvas.getContext("2d")!;
+
+    // White background
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Bigger font
-    ctx.font = "38px sans-serif";
+    // Text settings
+    ctx.font = "38px Arial";
     ctx.fillStyle = "#000000";
     ctx.textAlign = "left";
 
-    // 🔥 Increased spacing
-    const lineHeight = 65; // पहले 60 था
-    const leftMargin = 110; // पहले 100 था
-    const topMargin = 230; // पहले 220 था
-    const maxWidth = canvas.width - 260; // left-right दोनों में ज्यादा spacing
+    const lineHeight = 52;
+    const leftMargin = 80;
+    const topMargin = 170;
+    const maxWidth = canvas.width - 160;
 
-    // Word wrapping
-    const words = text.split(/\s+/);
+    // DON'T split by multiple spaces - preserve them
+    const words = text.split(" "); // Split by single space only
     const lines: string[] = [];
     let currentLine = "";
 
     words.forEach((word) => {
-      const testLine = currentLine + (currentLine ? "  " : "") + word;
+      const testLine = currentLine + (currentLine ? "   " : "") + word;
       const metrics = ctx.measureText(testLine);
 
       if (metrics.width > maxWidth && currentLine !== "") {
@@ -98,15 +158,17 @@ export async function createImageFromText(
       }
     });
 
-    if (currentLine.trim() !== "") {
+    if (currentLine !== "") {
       lines.push(currentLine);
     }
 
-    // Draw text lines
+    // Draw text
     let yPosition = topMargin;
     lines.forEach((line) => {
-      ctx.fillText(line, leftMargin, yPosition);
-      yPosition += lineHeight;
+      if (yPosition <= canvas.height - 80) {
+        ctx.fillText(line, leftMargin, yPosition);
+        yPosition += lineHeight;
+      }
     });
 
     resolve(canvas.toDataURL("image/png"));
